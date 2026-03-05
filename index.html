@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>Gestione Turni</title>
   <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=1">
 </head>
 <body>
 
@@ -99,23 +99,25 @@
       </div>
 
       <div class="form-group">
-        <label>Reparti (selezione multipla)</label>
+        <label>Reparti</label>
         <div id="modal-dept-chips" style="display:flex;flex-wrap:wrap;gap:0"></div>
       </div>
 
       <div class="form-group">
-        <label>Testo libero <span style="font-weight:400;opacity:0.6">(opzionale, solo per questo turno)</span></label>
+        <label>Altro <span style="font-weight:400;opacity:0.6">(opzionale, solo per questo turno)</span></label>
         <input type="text" id="modal-custom-text" placeholder="Es: Formazione, Ferie, Malattia..." autocomplete="off">
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="time-pickers-grid">
         <div class="form-group">
           <label>Inizio</label>
-          <input type="time" id="modal-time-start">
+          <div class="tp" id="tp-start"></div>
+          <input type="hidden" id="modal-time-start">
         </div>
         <div class="form-group">
           <label>Fine</label>
-          <input type="time" id="modal-time-end">
+          <div class="tp" id="tp-end"></div>
+          <input type="hidden" id="modal-time-end">
         </div>
       </div>
 
@@ -127,6 +129,6 @@
     </div>
   </div>
 
-  <script src="./app.js"></script>
+  <script src="./app.js?v=1"></script>
 </body>
 </html>

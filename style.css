@@ -451,6 +451,114 @@ input[type="color"] {
   line-height: 1.6;
 }
 
+/* ===== TIME PICKERS GRID ===== */
+.time-pickers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 480px) {
+  .time-pickers-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===== TIME PICKER ===== */
+.tp-activate {
+  width: 100%;
+  padding: 9px;
+  background: var(--surface2);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tp-activate:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tp-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 6px;
+}
+
+.tp-arr {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: var(--border);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+.tp-arr:hover { background: var(--accent); }
+
+.tp-h {
+  font-size: 22px;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: center;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.tp-col {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text2);
+  margin: 0 1px;
+}
+
+.tp-mins {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+}
+
+.tp-m {
+  flex: 1;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.tp-m:hover { border-color: var(--accent); color: var(--accent); }
+.tp-m.sel {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.tp-clear {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--text2);
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: all 0.1s;
+}
+.tp-clear:hover { color: var(--danger); }
+
 /* ===== SETTINGS LAYOUT ===== */
 .settings-grid {
   display: grid;

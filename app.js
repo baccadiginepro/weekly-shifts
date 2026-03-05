@@ -305,8 +305,9 @@ function openShiftModal(workerId, dayIndex, shiftIndex) {
   });
 
   document.getElementById('modal-custom-text').value = shift?.customText || '';
-  document.getElementById('modal-time-start').value = shift?.timeStart || '';
-  document.getElementById('modal-time-end').value = shift?.timeEnd || '';
+  createTimePicker('tp-start', 'modal-time-start', shift?.timeStart || '');
+  createTimePicker('tp-end',   'modal-time-end',   shift?.timeEnd   || '',
+    () => document.getElementById('modal-time-start').value);
 
   document.getElementById('modal-delete-btn').style.display = isEdit ? 'inline-flex' : 'none';
   document.getElementById('modal-overlay').classList.add('open');
@@ -594,6 +595,85 @@ function copyFromPrevWeek() {
 function printCalendar() {
   showTab('calendar');
   setTimeout(() => window.print(), 100);
+}
+
+// ===== TIME PICKER =====
+function createTimePicker(containerId, hiddenId, initialValue, getDefault) {
+  const container = document.getElementById(containerId);
+  const hidden = document.getElementById(hiddenId);
+
+  let active = !!initialValue;
+  let hour = 8, minute = 0;
+
+  function parseTime(val) {
+    if (!val) return null;
+    const [h, m] = val.split(':').map(Number);
+    return { h, m: Math.round(m / 15) * 15 % 60 };
+  }
+
+  if (initialValue) {
+    const t = parseTime(initialValue);
+    hour = t.h; minute = t.m;
+  }
+
+  function sync() {
+    hidden.value = active
+      ? `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+      : '';
+  }
+
+  function render() {
+    if (!active) {
+      container.innerHTML =
+        `<button class="tp-activate">+ Imposta orario</button>`;
+      container.querySelector('.tp-activate').addEventListener('click', () => {
+        if (getDefault) {
+          const t = parseTime(getDefault());
+          if (t) { hour = t.h; minute = t.m; }
+        }
+        active = true;
+        sync();
+        render();
+      });
+      sync();
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="tp-row">
+        <button class="tp-arr" data-d="-1">−</button>
+        <span class="tp-h">${String(hour).padStart(2, '0')}</span>
+        <button class="tp-arr" data-d="1">+</button>
+        <span class="tp-col">:</span>
+        <div class="tp-mins">
+          ${[0, 15, 30, 45].map(m =>
+            `<button class="tp-m${m === minute ? ' sel' : ''}" data-m="${m}">${String(m).padStart(2, '0')}</button>`
+          ).join('')}
+        </div>
+        <button class="tp-clear" title="Rimuovi orario">×</button>
+      </div>`;
+
+    container.querySelectorAll('.tp-arr').forEach(b =>
+      b.addEventListener('click', () => {
+        hour = (hour + parseInt(b.dataset.d) + 24) % 24;
+        sync(); render();
+      })
+    );
+    container.querySelectorAll('.tp-m').forEach(b =>
+      b.addEventListener('click', () => {
+        minute = parseInt(b.dataset.m);
+        sync(); render();
+      })
+    );
+    container.querySelector('.tp-clear').addEventListener('click', () => {
+      active = false;
+      sync(); render();
+    });
+
+    sync();
+  }
+
+  render();
 }
 
 // ===== UTILITÀ =====
