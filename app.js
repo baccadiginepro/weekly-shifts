@@ -317,6 +317,41 @@ function closeShiftModal() {
   editingShift = null;
 }
 
+function copyFromPrevDay() {
+  const { workerId, dayIndex } = editingShift;
+
+  // Giorno precedente: se lunedì (0) → domenica (6) della settimana precedente
+  let prevDayIndex, prevWeekKey;
+  if (dayIndex === 0) {
+    const dates = getWeekDates(state.currentWeek);
+    const prevDate = new Date(dates[0]);
+    prevDate.setDate(prevDate.getDate() - 1);
+    prevWeekKey = getWeekKey(prevDate);
+    prevDayIndex = 6;
+  } else {
+    prevWeekKey = state.currentWeek;
+    prevDayIndex = dayIndex - 1;
+  }
+
+  const prevWeekData = state.weeks[prevWeekKey];
+  const prevShifts = (prevWeekData?.shifts?.[getShiftKey(workerId, prevDayIndex)] || []).map(s => ({ ...s }));
+
+  if (prevShifts.length === 0) {
+    alert(`Nessun turno da copiare: ${DAYS_FULL[prevDayIndex === 6 && dayIndex === 0 ? 6 : dayIndex - 1]} non ha turni assegnati.`);
+    return;
+  }
+
+  const currentShifts = getShifts(workerId, dayIndex);
+  if (currentShifts.length > 0) {
+    if (!confirm(`Sostituire i turni di ${DAYS_FULL[dayIndex]} con quelli di ${DAYS_FULL[prevDayIndex]}?`)) return;
+  }
+
+  setShifts(workerId, dayIndex, JSON.parse(JSON.stringify(prevShifts)));
+  closeShiftModal();
+  renderCalendar();
+  renderHours();
+}
+
 function saveShift() {
   const { workerId, dayIndex, shiftIndex } = editingShift;
 
@@ -619,6 +654,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modal-overlay')) closeShiftModal();
   });
+
+  // Copia giorno precedente (nella modal)
+  document.getElementById('modal-copy-prev-day').addEventListener('click', copyFromPrevDay);
 
   // Copia settimana precedente
   document.getElementById('btn-copy-prev-week').addEventListener('click', copyFromPrevWeek);
