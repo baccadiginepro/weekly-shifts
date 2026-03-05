@@ -2,20 +2,20 @@
   "name": "Gestione Turni",
   "short_name": "Turni",
   "description": "Gestione turni settimanali con calendario",
-  "start_url": "/",
+  "start_url": "/weekly-shifts/",
+  "scope": "/weekly-shifts/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#1a1a2e",
   "theme_color": "#0f3460",
   "orientation": "any",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/weekly-shifts/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "/weekly-shifts/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
