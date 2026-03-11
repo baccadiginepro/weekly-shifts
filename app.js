@@ -1,4 +1,4 @@
-const APP_VERSION = '1.10';
+const APP_VERSION = '1.13';
 
 // ===== STATO APPLICAZIONE =====
 const DAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
@@ -595,7 +595,6 @@ function copyFromPrevWeek() {
 
 // ===== STAMPA =====
 function printCalendar() {
-  alert('DEBUG: printCalendar avviato');
   showTab('calendar');
 
   const dates = getWeekDates(state.currentWeek);
@@ -650,20 +649,7 @@ function printCalendar() {
     wrapper.appendChild(page);
   }
 
-  setTimeout(() => {
-    if (typeof window.print !== 'function') {
-      alert('DEBUG: window.print non è disponibile su questo browser/modalità.');
-      wrapper.innerHTML = '';
-      return;
-    }
-    try {
-      window.print();
-      window.addEventListener('afterprint', () => { wrapper.innerHTML = ''; }, { once: true });
-    } catch (e) {
-      alert('DEBUG errore stampa: ' + e.message);
-      wrapper.innerHTML = '';
-    }
-  }, 150);
+  setTimeout(() => window.print(), 150);
 }
 
 // ===== TIME PICKER =====
