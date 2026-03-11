@@ -1,3 +1,5 @@
+const APP_VERSION = '1.10';
+
 // ===== STATO APPLICAZIONE =====
 const DAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
 const DAYS_FULL = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
@@ -593,6 +595,7 @@ function copyFromPrevWeek() {
 
 // ===== STAMPA =====
 function printCalendar() {
+  alert('DEBUG: printCalendar avviato');
   showTab('calendar');
 
   const dates = getWeekDates(state.currentWeek);
@@ -809,6 +812,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Stampa
   document.getElementById('btn-print').addEventListener('click', printCalendar);
+
+  // Versione nell'header
+  document.querySelector('header h1').textContent = `📅 Turni v${APP_VERSION}`;
 
   // Avvio sulla tab calendario
   showTab('calendar');
