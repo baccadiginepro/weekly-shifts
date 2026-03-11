@@ -1,4 +1,4 @@
-const CACHE_NAME = 'turni-v14';
+const CACHE_NAME = 'turni-v15';
 const ASSETS = [
   '/weekly-shifts/',
   '/weekly-shifts/index.html',
