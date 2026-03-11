@@ -594,7 +594,63 @@ function copyFromPrevWeek() {
 // ===== STAMPA =====
 function printCalendar() {
   showTab('calendar');
-  setTimeout(() => window.print(), 100);
+
+  const dates = getWeekDates(state.currentWeek);
+  const [y, w] = state.currentWeek.split('-W');
+  const weekLabel = `Settimana ${w}/${y}  •  ${formatDate(dates[0])} – ${formatDate(dates[6])}`;
+
+  function buildThead() {
+    let h = `<thead><tr><th class="col-worker">Lavoratore</th>`;
+    for (let d = 0; d < 7; d++) {
+      h += `<th><div class="day-header-wrapper">
+        <span>${DAYS[d]}</span>
+        <span style="font-size:10px;opacity:0.7">${formatDate(dates[d])}</span>
+      </div></th>`;
+    }
+    return h + `</tr></thead>`;
+  }
+
+  const wrapper = document.getElementById('print-tables');
+  wrapper.innerHTML = '';
+
+  for (let i = 0; i < state.workers.length; i += 4) {
+    const group = state.workers.slice(i, i + 4);
+
+    let html = '';
+
+    html += `<table class="calendar-table print-table">${buildThead()}<tbody>`;
+    group.forEach(worker => {
+      html += `<tr><td class="worker-name-cell">${escapeHtml(worker.name)}</td>`;
+      for (let d = 0; d < 7; d++) {
+        const shifts = getShifts(worker.id, d);
+        html += `<td><div class="shift-cell">`;
+        shifts.forEach(s => {
+          const depts = (s.deptIds || []).map(id => state.departments.find(dep => dep.id === id)).filter(Boolean);
+          const lines = [...depts.map(dep => escapeHtml(dep.name))];
+          if (s.customText) lines.push(`<em>${escapeHtml(s.customText)}</em>`);
+          if (lines.length === 0) lines.push('—');
+          const time = (s.timeStart && s.timeEnd) ? `${s.timeStart}–${s.timeEnd}` : (s.timeStart || '');
+          html += `<span class="shift-badge">
+            ${lines.map(l => `<span class="badge-dept-line">${l}</span>`).join('')}
+            ${time ? `<span class="badge-time">${escapeHtml(time)}</span>` : ''}
+          </span>`;
+        });
+        html += `</div></td>`;
+      }
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+
+    const page = document.createElement('div');
+    page.className = 'print-page';
+    page.innerHTML = html;
+    wrapper.appendChild(page);
+  }
+
+  setTimeout(() => {
+    window.print();
+    window.addEventListener('afterprint', () => { wrapper.innerHTML = ''; }, { once: true });
+  }, 150);
 }
 
 // ===== TIME PICKER =====

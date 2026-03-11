@@ -614,6 +614,8 @@ input[type="color"] {
 .hours-day-row:last-child { border: none; }
 .hours-day-row span:last-child { color: var(--text); font-weight: 500; }
 
+#print-tables { display: none; }
+
 /* ===== EMPTY STATE ===== */
 .empty-state {
   text-align: center;
@@ -641,7 +643,7 @@ input[type="color"] {
 
   body {
     color: #000 !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     font-family: 'Segoe UI', system-ui, sans-serif !important;
   }
 
@@ -699,7 +701,7 @@ input[type="color"] {
     color: #000 !important;
     border: 1px solid #94a3b8 !important;
     padding: 8px 5px !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     font-weight: 700 !important;
     text-align: center !important;
   }
@@ -712,15 +714,66 @@ input[type="color"] {
     background: #bfdbfe !important;
   }
 
-  /* Righe non spezzate tra pagine */
-  .calendar-table tbody tr {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+  /* Nascondi tabella interattiva, mostra tabelle di stampa */
+  #calendar-table-wrapper { display: none !important; }
+  #print-tables { display: block !important; }
+
+  /* Ogni pagina di stampa */
+  .print-page {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    break-after: page;
+    box-sizing: border-box;
+  }
+  .print-page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Etichetta settimana */
+  .print-week-label {
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Tabella occupa tutto lo spazio rimanente nella pagina */
+  .print-table {
+    flex: 1;
+    height: 100%;
+  }
+
+  /* Le righe si distribuiscono proporzionalmente */
+  .print-table tbody tr {
+    height: auto !important;
+  }
+
+  /* Sfondi in stampa: grigio per intestazione e nome lavoratore, trasparente per le celle */
+  .calendar-table td,
+  .calendar-table td.today-col,
+  .shift-cell {
+    background: transparent !important;
+  }
+  .calendar-table th {
+    background: #e2e8f0 !important;
+  }
+  .calendar-table td.worker-name-cell {
+    background: #f1f5f9 !important;
+  }
+
+  /* Bordi neri tra righe e colonne */
+  .calendar-table th,
+  .calendar-table td {
+    border: 1.5px solid #000 !important;
   }
 
   /* Celle */
   .calendar-table td {
-    border: 1px solid #cbd5e1 !important;
     background: transparent !important;
     vertical-align: middle !important;
   }
@@ -728,9 +781,9 @@ input[type="color"] {
   .calendar-table td.worker-name-cell {
     background: #f1f5f9 !important;
     color: #000 !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     font-weight: 700 !important;
-    border-right: 3px solid #3b82f6 !important;
+    border-right: 3px solid #000 !important;
     position: static !important;
     word-break: break-word !important;
     max-width: none !important;
@@ -763,12 +816,12 @@ input[type="color"] {
 
   .badge-dept-line {
     display: block !important;
-    font-size: 13px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;
   }
   .shift-badge .badge-time {
-    font-size: 12px !important;
+    font-size: 13px !important;
     font-weight: 400 !important;
     color: #475569 !important;
     opacity: 1 !important;
