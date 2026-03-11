@@ -1,4 +1,4 @@
-const APP_VERSION = '1.16';
+const APP_VERSION = '1.17';
 
 // ===== STATO APPLICAZIONE =====
 const DAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
