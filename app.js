@@ -648,8 +648,18 @@ function printCalendar() {
   }
 
   setTimeout(() => {
-    window.print();
-    window.addEventListener('afterprint', () => { wrapper.innerHTML = ''; }, { once: true });
+    if (typeof window.print !== 'function') {
+      alert('DEBUG: window.print non è disponibile su questo browser/modalità.');
+      wrapper.innerHTML = '';
+      return;
+    }
+    try {
+      window.print();
+      window.addEventListener('afterprint', () => { wrapper.innerHTML = ''; }, { once: true });
+    } catch (e) {
+      alert('DEBUG errore stampa: ' + e.message);
+      wrapper.innerHTML = '';
+    }
   }, 150);
 }
 
