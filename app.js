@@ -1,4 +1,4 @@
-const APP_VERSION = '1.17';
+const APP_VERSION = '1.18';
 
 // ===== STATO APPLICAZIONE =====
 const DAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
@@ -13,9 +13,79 @@ let state = {
 
 let editingShift = null; // {workerId, dayIndex, shiftIndex|null}
 
+// ===== FIREBASE =====
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyALnJOUsQ2gIU9QTtWS9PxZm9ffhamVMTs",
+  authDomain: "turni-coop.firebaseapp.com",
+  projectId: "turni-coop",
+  storageBucket: "turni-coop.firebasestorage.app",
+  messagingSenderId: "187968508057",
+  appId: "1:187968508057:web:4723757111eceefcb22808"
+};
+
+let db = null;
+let syncTimer = null;
+
+function initFirebase() {
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+  } catch(e) {
+    console.warn('Firebase non disponibile:', e);
+  }
+}
+
+function setSyncStatus(status) {
+  const el = document.getElementById('sync-indicator');
+  if (!el) return;
+  if (status === 'syncing') { el.textContent = '⏳'; el.title = 'Sincronizzazione...'; }
+  else if (status === 'ok')  { el.textContent = '☁️'; el.title = 'Sincronizzato con il cloud'; }
+  else                       { el.textContent = '⚠️'; el.title = 'Errore sincronizzazione cloud'; }
+}
+
+function syncToFirestore() {
+  if (!db) return;
+  clearTimeout(syncTimer);
+  setSyncStatus('syncing');
+  syncTimer = setTimeout(async () => {
+    try {
+      const { currentWeek, ...dataToSync } = state; // non sincronizzare la settimana corrente (UI state)
+      await db.collection('turni').doc('state').set(dataToSync);
+      setSyncStatus('ok');
+    } catch(e) {
+      console.error('Errore sync Firestore:', e);
+      setSyncStatus('error');
+    }
+  }, 1000);
+}
+
+async function loadFromFirestore() {
+  if (!db) return false;
+  try {
+    setSyncStatus('syncing');
+    const doc = await db.collection('turni').doc('state').get();
+    if (doc.exists) {
+      const data = doc.data();
+      state = { ...state, ...data };
+      if (!state.currentWeek) state.currentWeek = getWeekKey(new Date());
+      localStorage.setItem('turni_state', JSON.stringify(state));
+      setSyncStatus('ok');
+      return true;
+    }
+    setSyncStatus('ok');
+    return false;
+  } catch(e) {
+    console.warn('Firestore non raggiungibile, uso localStorage:', e);
+    setSyncStatus('error');
+    return false;
+  }
+}
+
 // ===== PERSISTENZA =====
 function save() {
   localStorage.setItem('turni_state', JSON.stringify(state));
+  syncToFirestore();
 }
 
 function load() {
@@ -751,8 +821,14 @@ function randomColor() {
 }
 
 // ===== INIT =====
-document.addEventListener('DOMContentLoaded', () => {
-  load();
+document.addEventListener('DOMContentLoaded', async () => {
+  initFirebase();
+
+  // Carica dati: prima da Firestore, poi localStorage come fallback
+  const loadedFromCloud = await loadFromFirestore();
+  if (!loadedFromCloud) {
+    load();
+  }
 
   // Registra Service Worker
   if ('serviceWorker' in navigator) {
