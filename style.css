@@ -266,7 +266,7 @@ input[type="color"] {
 .calendar-table td.worker-name-cell {
   padding: 8px 10px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   background: var(--surface);
   position: sticky;
   left: 0;
@@ -295,28 +295,27 @@ input[type="color"] {
   border-radius: 5px;
   padding: 4px 6px;
   margin-bottom: 3px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.3;
   cursor: pointer;
   transition: opacity 0.15s;
-  word-break: break-word;
 }
 .shift-badge:hover { opacity: 0.8; }
 .badge-dept-line { display: block; }
 .badge-dept-line + .badge-dept-line { margin-top: 1px; }
-.shift-badge .badge-time { display: block; font-weight: 400; opacity: 0.85; font-size: 10px; margin-top: 2px; }
+.shift-badge .badge-time { display: block; font-weight: 400; opacity: 0.85; font-size: 11px; margin-top: 2px; }
 .shift-add-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--surface2);
   border: 1px dashed var(--border);
   color: var(--text2);
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   margin: 2px auto;
   transition: all 0.15s;
@@ -421,14 +420,17 @@ input[type="color"] {
 }
 
 /* ===== COVERAGE TFOOT ===== */
+tfoot td {
+  vertical-align: middle !important;
+}
 .coverage-foot-label {
   padding: 6px 10px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--danger);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: rgba(239,68,68,0.06);
+  background: var(--surface);
   border-top: 1px solid rgba(239,68,68,0.3);
   position: sticky;
   left: 0;
@@ -437,7 +439,6 @@ input[type="color"] {
 .coverage-foot-cell {
   padding: 4px 6px;
   border-top: 1px solid rgba(239,68,68,0.3);
-  background: rgba(239,68,68,0.04);
   vertical-align: top;
 }
 .coverage-foot-cell.today-col {
@@ -445,10 +446,10 @@ input[type="color"] {
 }
 .coverage-missing-item {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  line-height: 1.6;
+  line-height: 2;
 }
 
 /* ===== TIME PICKERS GRID ===== */
