@@ -1,4 +1,4 @@
-const APP_VERSION = '1.19';
+const APP_VERSION = '1.20';
 
 // ===== STATO APPLICAZIONE =====
 const DAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
@@ -44,8 +44,11 @@ function setSyncStatus(status) {
   else                       { el.textContent = '⚠️'; el.title = 'Errore sincronizzazione cloud'; }
 }
 
+const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
 function syncToFirestore() {
   if (!db) return;
+  if (IS_LOCAL) return; // scrittura disabilitata in locale
   clearTimeout(syncTimer);
   setSyncStatus('syncing');
   syncTimer = setTimeout(async () => {
@@ -350,6 +353,7 @@ function renderCalendar() {
 
 // ===== MODAL TURNO =====
 function openShiftModal(workerId, dayIndex, shiftIndex) {
+  history.pushState({ modal: true }, '');
   editingShift = { workerId, dayIndex, shiftIndex };
   const worker = state.workers.find(w => w.id === workerId);
   const isEdit = shiftIndex !== null;
@@ -388,6 +392,7 @@ function openShiftModal(workerId, dayIndex, shiftIndex) {
 function closeShiftModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   editingShift = null;
+  if (history.state?.modal) history.back();
 }
 
 function copyFromPrevDay() {
@@ -801,6 +806,20 @@ function createTimePicker(containerId, hiddenId, initialValue, getDefault) {
   render();
 }
 
+// ===== TEMA =====
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const btn = document.getElementById('btn-theme');
+  if (btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+}
+
+function toggleTheme() {
+  const current = document.documentElement.dataset.theme;
+  const next = current === 'light' ? 'dark' : 'light';
+  localStorage.setItem('turni_theme', next);
+  applyTheme(next);
+}
+
 // ===== UTILITÀ =====
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -858,6 +877,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('new-dept-color').value = randomColor();
 
+  // Tasto indietro chiude la modale
+  window.addEventListener('popstate', e => {
+    if (document.getElementById('modal-overlay').classList.contains('open')) {
+      document.getElementById('modal-overlay').classList.remove('open');
+      editingShift = null;
+    }
+  });
+
   // Modal
   document.getElementById('modal-save-btn').addEventListener('click', saveShift);
   document.getElementById('modal-delete-btn').addEventListener('click', deleteShift);
@@ -871,6 +898,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Copia settimana precedente
   document.getElementById('btn-copy-prev-week').addEventListener('click', copyFromPrevWeek);
+
+  // Indicatore locale
+  if (IS_LOCAL) {
+    const el = document.getElementById('sync-indicator');
+    if (el) { el.textContent = '💻'; el.title = 'Modalità locale — scrittura cloud disabilitata'; }
+  }
+
+  // Tema
+  const savedTheme = localStorage.getItem('turni_theme') || 'dark';
+  applyTheme(savedTheme);
+  document.getElementById('btn-theme').addEventListener('click', toggleTheme);
 
   // Stampa
   document.getElementById('btn-print').addEventListener('click', printCalendar);

@@ -1,12 +1,12 @@
-const CACHE_NAME = 'turni-v19';
+const CACHE_NAME = 'turni-v20';
 const ASSETS = [
-  '/weekly-shifts/',
-  '/weekly-shifts/index.html',
-  '/weekly-shifts/style.css',
-  '/weekly-shifts/app.js',
-  '/weekly-shifts/manifest.json',
-  '/weekly-shifts/icon-192.png',
-  '/weekly-shifts/icon-512.png'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', e => {
